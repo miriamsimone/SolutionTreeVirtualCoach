@@ -1,0 +1,6 @@
+pinecone-client==5.0.1
+openai>=1.50.0
+python-dotenv==1.0.0
+tiktoken>=0.8.0
+tqdm==4.66.1
+numpy>=1.26.0

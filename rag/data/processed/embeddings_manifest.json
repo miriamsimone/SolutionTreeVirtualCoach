@@ -1,0 +1,54 @@
+{
+  "total_chunks": 147,
+  "documents": {
+    "learning_by_doing.txt": {
+      "doc_title": "Learning by Doing",
+      "agents": [
+        "professional_learning"
+      ],
+      "chunk_count": 64
+    },
+    "essential_standards_2nd_math.txt": {
+      "doc_title": "Essential Standards Second Grade Mathematics",
+      "agents": [
+        "curriculum_planning"
+      ],
+      "chunk_count": 3
+    },
+    "learning_by_doing_actionguide.txt": {
+      "doc_title": "Learning by Doing: Action Guide",
+      "agents": [
+        "professional_learning"
+      ],
+      "chunk_count": 41
+    },
+    "behavior_academies.txt": {
+      "doc_title": "Behavior Academies",
+      "agents": [
+        "professional_learning"
+      ],
+      "chunk_count": 27
+    },
+    "american_gov_smartgoals.txt": {
+      "doc_title": "American Government Smart Goals Worksheet",
+      "agents": [
+        "curriculum_planning"
+      ],
+      "chunk_count": 3
+    },
+    "the_way_forward.txt": {
+      "doc_title": "The Way Forward",
+      "agents": [
+        "professional_learning"
+      ],
+      "chunk_count": 6
+    },
+    "3rd_grade_smartgoals.txt": {
+      "doc_title": "Third Grade Team Smart Goal",
+      "agents": [
+        "curriculum_planning"
+      ],
+      "chunk_count": 3
+    }
+  }
+}
