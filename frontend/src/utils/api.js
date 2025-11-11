@@ -197,6 +197,12 @@ export const api = {
   getAgents: async () => {
     const response = await apiClient.get('/api/agents');
     return response.data;
+  },
+
+  // Analytics
+  getAnalytics: async () => {
+    const response = await apiClient.get('/api/analytics');
+    return response.data;
   }
 };
 

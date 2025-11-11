@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routes import auth_router, chat_router, sessions_router, feedback_router
 from app.routes.chat_stream import router as chat_stream_router
+from app.routes.analytics import router as analytics_router
 from app.utils.logging import setup_logging
 import logging
 
@@ -40,6 +41,7 @@ app.include_router(chat_router)
 app.include_router(chat_stream_router)
 app.include_router(sessions_router)
 app.include_router(feedback_router)
+app.include_router(analytics_router)
 
 
 @app.get("/")

@@ -19,6 +19,62 @@ Authorization: Bearer <firebase_id_token>
 
 ## Endpoints
 
+### Analytics
+
+**`GET /api/analytics?days=7`**
+
+Get usage statistics and insights.
+
+Query Parameters:
+- `days` (optional): Number of days for recent activity (default: 7)
+
+Response 200:
+```json
+{
+  "total_conversations": 127,
+  "active_users": 43,
+  "avg_rating": 4.6,
+  "sessions_this_week": 18,
+  "agent_usage": {
+    "professional_learning": 65.5,
+    "classroom_curriculum": 34.5
+  },
+  "agent_usage_counts": {
+    "professional_learning": 83,
+    "classroom_curriculum": 44
+  },
+  "recent_activity": [
+    {"date": "2025-01-08", "sessions": 12},
+    {"date": "2025-01-09", "sessions": 15}
+  ],
+  "total_feedback_count": 89,
+  "top_rated_sessions": [
+    {
+      "session_id": "uuid",
+      "avg_rating": 5.0,
+      "rating_count": 3
+    }
+  ],
+  "generated_at": "2025-01-10T10:30:00Z"
+}
+```
+
+**`GET /api/analytics/summary`**
+
+Get quick analytics summary (faster, lightweight).
+
+Response 200:
+```json
+{
+  "total_conversations": 127,
+  "active_users": 43,
+  "avg_rating": 4.6,
+  "total_feedback": 89
+}
+```
+
+---
+
 ### Health & Info
 
 **`GET /`**
