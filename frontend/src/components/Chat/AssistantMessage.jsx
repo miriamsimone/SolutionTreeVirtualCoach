@@ -21,6 +21,11 @@ const AssistantMessage = ({ message }) => {
         <div className="bg-white border border-gray-200 rounded-lg rounded-tl-sm px-4 py-3 shadow-sm">
           <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
             {message.content}
+            {message.streaming && (
+              <span className="inline-flex ml-1">
+                <span className="animate-pulse text-st-blue">▊</span>
+              </span>
+            )}
           </p>
         </div>
 
@@ -28,11 +33,30 @@ const AssistantMessage = ({ message }) => {
         {message.citations && message.citations.length > 0 && (
           <div className="mt-3 space-y-2">
             <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
-              Sources ({message.citations.length})
+              Sources ({(() => {
+                // Count unique sources
+                const uniqueSources = new Set(message.citations.map(c => c.source_title));
+                return uniqueSources.size;
+              })()})
             </h4>
-            {message.citations.map((citation, index) => (
-              <Citation key={citation.id || index} citation={citation} index={index} />
-            ))}
+            {(() => {
+              // Group citations by source_title
+              const grouped = message.citations.reduce((acc, citation) => {
+                if (!acc[citation.source_title]) {
+                  acc[citation.source_title] = [];
+                }
+                acc[citation.source_title].push(citation);
+                return acc;
+              }, {});
+
+              return Object.entries(grouped).map(([sourceTitle, citations], groupIndex) => (
+                <Citation
+                  key={sourceTitle}
+                  citations={citations}
+                  index={groupIndex}
+                />
+              ));
+            })()}
           </div>
         )}
 

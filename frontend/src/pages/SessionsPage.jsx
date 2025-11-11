@@ -13,6 +13,12 @@ const SessionsPage = () => {
   const [deletingId, setDeletingId] = useState(null);
 
   const handleLoadSession = async (sessionId) => {
+    if (!sessionId) {
+      console.error('Session ID is undefined');
+      alert('Invalid session ID');
+      return;
+    }
+
     try {
       await loadSession(sessionId);
       navigate('/chat');
@@ -101,11 +107,17 @@ const SessionsPage = () => {
         <div className="space-y-4">
           {sessions.map((session) => {
             const agent = getAgentInfo(session.agent_id);
+            // Use session.id, session._id, or session.session_id as fallback
+            const sessionId = session.id || session._id || session.session_id;
+
+            if (!sessionId) {
+              console.error('Session missing ID:', session);
+            }
 
             return (
               <div
-                key={session.id}
-                onClick={() => handleLoadSession(session.id)}
+                key={sessionId || Math.random()}
+                onClick={() => handleLoadSession(sessionId)}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex items-start justify-between">
@@ -135,12 +147,12 @@ const SessionsPage = () => {
                   </div>
 
                   <button
-                    onClick={(e) => handleDeleteSession(session.id, e)}
-                    disabled={deletingId === session.id}
+                    onClick={(e) => handleDeleteSession(sessionId, e)}
+                    disabled={deletingId === sessionId}
                     className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                     title="Delete session"
                   >
-                    {deletingId === session.id ? (
+                    {deletingId === sessionId ? (
                       <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <Trash2 className="w-5 h-5" />

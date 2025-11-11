@@ -9,6 +9,9 @@ export const ChatProvider = ({ children }) => {
   const [currentAgent, setCurrentAgent] = useState(AGENTS.PROFESSIONAL_LEARNING.id);
   const [sessionId, setSessionId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingContent, setStreamingContent] = useState('');
+  const [streamingCitations, setStreamingCitations] = useState([]);
   const [error, setError] = useState(null);
 
   const sendMessage = useCallback(async (query) => {
@@ -22,36 +25,83 @@ export const ChatProvider = ({ children }) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
+    setIsStreaming(true);
+    setStreamingContent('');
+    setStreamingCitations([]);
     setError(null);
 
+    // Use refs to capture current values
+    let currentContent = '';
+    let currentCitations = [];
+    let currentMessageId = null;
+
     try {
-      const response = await api.sendMessage({
+      await api.streamMessage({
         agent_id: currentAgent,
         query,
-        session_id: sessionId
+        session_id: sessionId,
+
+        onCitations: (data) => {
+          // Citations arrive first
+          currentCitations = data.citations || [];
+          currentMessageId = data.message_id;
+
+          setStreamingCitations(currentCitations);
+
+          // Update session ID if provided
+          if (data.session_id && !sessionId) {
+            setSessionId(data.session_id);
+          }
+        },
+
+        onContent: (chunk) => {
+          // Append each chunk to build the response
+          currentContent += chunk;
+          setStreamingContent(currentContent);
+        },
+
+        onDone: () => {
+          // Streaming complete - add to message history using captured values
+          const assistantMessage = {
+            id: currentMessageId || Date.now().toString() + '-ai',
+            role: 'assistant',
+            content: currentContent,
+            citations: currentCitations,
+            agent_used: currentAgent,
+            timestamp: new Date().toISOString()
+          };
+
+          setMessages(prev => [...prev, assistantMessage]);
+
+          // Clear streaming state after a small delay to avoid flicker
+          setTimeout(() => {
+            setIsStreaming(false);
+            setStreamingContent('');
+            setStreamingCitations([]);
+          }, 100);
+        },
+
+        onError: (errorMsg) => {
+          console.error('Streaming error:', errorMsg);
+          setError(errorMsg);
+          setIsStreaming(false);
+
+          // Add error message to chat
+          const errorMessage = {
+            id: Date.now().toString() + '-error',
+            role: 'system',
+            content: 'Sorry, I encountered an error. Please try again.',
+            error: true,
+            timestamp: new Date().toISOString()
+          };
+
+          setMessages(prev => [...prev, errorMessage]);
+        }
       });
-
-      const assistantMessage = {
-        id: Date.now().toString() + '-ai',
-        role: 'assistant',
-        content: response.response,
-        citations: response.citations || [],
-        agent_used: response.agent_used,
-        timestamp: new Date().toISOString()
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
-
-      // Update session ID if returned
-      if (response.session_id && !sessionId) {
-        setSessionId(response.session_id);
-      }
-
-      return assistantMessage;
     } catch (err) {
       console.error('Error sending message:', err);
       setError(err.message || 'Failed to send message');
+      setIsStreaming(false);
 
       // Add error message to chat
       const errorMessage = {
@@ -64,8 +114,6 @@ export const ChatProvider = ({ children }) => {
 
       setMessages(prev => [...prev, errorMessage]);
       throw err;
-    } finally {
-      setIsLoading(false);
     }
   }, [currentAgent, sessionId]);
 
@@ -102,6 +150,9 @@ export const ChatProvider = ({ children }) => {
     currentAgent,
     sessionId,
     isLoading,
+    isStreaming,
+    streamingContent,
+    streamingCitations,
     error,
     sendMessage,
     switchAgent,

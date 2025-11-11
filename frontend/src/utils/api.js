@@ -94,6 +94,73 @@ export const api = {
     return response.data;
   },
 
+  // Streaming Chat
+  streamMessage: async ({ agent_id, query, session_id = null, onCitations, onContent, onDone, onError }) => {
+    try {
+      const user = auth.currentUser;
+      const token = user ? await user.getIdToken() : null;
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/chat/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({
+          query,
+          agent_id,
+          session_id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+
+              switch (data.type) {
+                case 'citations':
+                  if (onCitations) onCitations(data);
+                  break;
+                case 'content':
+                  if (onContent) onContent(data.content);
+                  break;
+                case 'done':
+                  if (onDone) onDone();
+                  return;
+                case 'error':
+                  if (onError) onError(data.error);
+                  return;
+              }
+            } catch (parseError) {
+              console.error('Error parsing SSE data:', parseError, line);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+      if (onError) onError(error.message || 'Streaming failed');
+      throw error;
+    }
+  },
+
   // Sessions
   getSessions: async () => {
     const response = await apiClient.get('/api/sessions');

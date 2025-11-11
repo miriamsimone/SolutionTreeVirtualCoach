@@ -20,14 +20,11 @@ def format_context_for_prompt(citations: List[Citation]) -> str:
 
     context_parts = []
     for i, citation in enumerate(citations, 1):
-        context_parts.append(f"[Source {i}]")
-        context_parts.append(f"Title: {citation.source_title}")
-        if citation.page_number:
-            context_parts.append(f"Page: {citation.page_number}")
-        context_parts.append(f"Content: {citation.chunk_text}")
-        context_parts.append("")  # Empty line for spacing
+        # Compact format to reduce tokens
+        page_info = f" (p.{citation.page_number})" if citation.page_number else ""
+        context_parts.append(f"[{i}] {citation.source_title}{page_info}: {citation.chunk_text}")
 
-    return "\n".join(context_parts)
+    return "\n\n".join(context_parts)
 
 
 def build_conversation_history(
