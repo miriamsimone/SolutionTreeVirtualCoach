@@ -20,11 +20,13 @@ Both agents use RAG (Retrieval Augmented Generation) with metadata-filtered acce
 SolutionTree/
 ├── backend/              # FastAPI + RAG backend
 ├── frontend/             # React + Vite frontend
-├── scraper/              # Document ingestion pipeline
+├── rag/                  # Document ingestion and RAG pipeline
+├── venv/                 # Python virtual environment (shared)
 ├── PRD.md               # Product Requirements Document
 ├── TASKLIST_BACKEND.md  # Backend implementation checklist
 ├── TASKLIST_FRONTEND.md # Frontend implementation checklist
-└── TASKLIST_RAG.md      # RAG system checklist
+├── TASKLIST_RAG.md      # RAG system checklist
+└── FRONTEND_STREAMING_TASK.md  # Streaming implementation guide
 ```
 
 ### Tech Stack
@@ -97,7 +99,7 @@ cp .env.example .env
 # Run locally
 npm run dev
 
-# Access app: http://localhost:3000
+# Access app: http://localhost:5173
 ```
 
 ### Deploy Backend to Cloud Run
@@ -122,17 +124,19 @@ firebase deploy --only hosting
 - **[TASKLIST_BACKEND.md](TASKLIST_BACKEND.md)** - Backend implementation tasks
 - **[TASKLIST_FRONTEND.md](TASKLIST_FRONTEND.md)** - Frontend implementation tasks
 - **[TASKLIST_RAG.md](TASKLIST_RAG.md)** - RAG system implementation tasks
+- **[FRONTEND_STREAMING_TASK.md](FRONTEND_STREAMING_TASK.md)** - Streaming implementation guide
 
 ### Backend Documentation
 - **[backend/README.md](backend/README.md)** - Backend setup and API reference
 - **[backend/API_REFERENCE.md](backend/API_REFERENCE.md)** - Complete API documentation
 - **[backend/DEPLOYMENT.md](backend/DEPLOYMENT.md)** - Cloud Run deployment guide
+- **[backend/DEPLOY_QUICKSTART.md](backend/DEPLOY_QUICKSTART.md)** - Quick deployment reference
 - **[backend/STREAMING_API.md](backend/STREAMING_API.md)** - Streaming endpoint documentation
 - **[backend/OPTIMIZATIONS.md](backend/OPTIMIZATIONS.md)** - Performance optimizations applied
 - **[backend/TEST_RESULTS.md](backend/TEST_RESULTS.md)** - Test coverage and results
 
-### Frontend Documentation
-- **[FRONTEND_STREAMING_TASK.md](FRONTEND_STREAMING_TASK.md)** - Streaming implementation guide
+### RAG System Documentation
+- **[rag/README.md](rag/README.md)** - Document ingestion and vector database setup
 
 ## 🔑 Key Features
 
@@ -301,6 +305,8 @@ npm test
 
 ### Backend (Cloud Run)
 
+The backend is deployed to Google Cloud Run. See [backend/DEPLOYMENT.md](backend/DEPLOYMENT.md) for full details.
+
 ```bash
 cd backend
 ./deploy.sh
@@ -315,6 +321,9 @@ gcloud run logs tail plc-coach-backend
 
 # View metrics
 gcloud run services describe plc-coach-backend
+
+# Check service status
+gcloud run services list
 ```
 
 ### Frontend (Firebase Hosting)
@@ -475,5 +484,5 @@ Built with:
 ---
 
 **Version:** 1.0.0
-**Last Updated:** November 11, 2025
+**Last Updated:** November 11, 2024
 **Status:** ✅ Production Ready
