@@ -26,11 +26,11 @@ const Header = ({ onMenuToggle }) => {
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="text-3xl">📚</div>
-              <div>
-                <h1 className="text-xl font-bold text-st-blue-dark">Solution Tree</h1>
-                <p className="text-xs text-gray-600 hidden sm:block">Virtual Coach</p>
-              </div>
+              <img
+                src="/logo.png"
+                alt="Solution Tree"
+                className="h-10 w-auto"
+              />
             </div>
           </div>
 

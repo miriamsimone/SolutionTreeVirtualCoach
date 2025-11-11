@@ -3,6 +3,7 @@ import { Bot } from 'lucide-react';
 import { formatRelativeTime } from '../../utils/formatting';
 import Citation from './Citation';
 import RatingComponent from '../Feedback/RatingComponent';
+import FormattedMessageContent from './FormattedMessageContent';
 
 const AssistantMessage = ({ message }) => {
   const [hasRated, setHasRated] = useState(false);
@@ -19,14 +20,10 @@ const AssistantMessage = ({ message }) => {
 
       <div className="max-w-[70%] flex-1">
         <div className="bg-white border border-gray-200 rounded-lg rounded-tl-sm px-4 py-3 shadow-sm">
-          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
-            {message.content}
-            {message.streaming && (
-              <span className="inline-flex ml-1">
-                <span className="animate-pulse text-st-blue">▊</span>
-              </span>
-            )}
-          </p>
+          <FormattedMessageContent
+            content={message.content}
+            streaming={message.streaming}
+          />
         </div>
 
         {/* Citations */}

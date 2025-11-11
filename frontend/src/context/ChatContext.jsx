@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback } from 'react';
+import { createContext, useState, useCallback, useEffect } from 'react';
 import { api } from '../utils/api';
 import { AGENTS } from '../utils/constants';
 
@@ -7,6 +7,7 @@ export const ChatContext = createContext(null);
 export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [currentAgent, setCurrentAgent] = useState(AGENTS.PROFESSIONAL_LEARNING.id);
+  const [initialized, setInitialized] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -119,6 +120,20 @@ export const ChatProvider = ({ children }) => {
 
   const switchAgent = useCallback((agentId) => {
     setCurrentAgent(agentId);
+
+    // Add welcome message from the new agent
+    const agent = Object.values(AGENTS).find(a => a.id === agentId);
+    if (agent && agent.welcomeMessage) {
+      const welcomeMessage = {
+        id: Date.now().toString() + '-welcome',
+        role: 'assistant',
+        content: agent.welcomeMessage,
+        agent_used: agentId,
+        timestamp: new Date().toISOString(),
+        isWelcome: true
+      };
+      setMessages([welcomeMessage]);
+    }
   }, []);
 
   const clearMessages = useCallback(() => {
@@ -144,6 +159,25 @@ export const ChatProvider = ({ children }) => {
       setIsLoading(false);
     }
   }, []);
+
+  // Initialize with welcome message on first load
+  useEffect(() => {
+    if (!initialized && messages.length === 0) {
+      const agent = Object.values(AGENTS).find(a => a.id === currentAgent);
+      if (agent && agent.welcomeMessage) {
+        const welcomeMessage = {
+          id: 'initial-welcome',
+          role: 'assistant',
+          content: agent.welcomeMessage,
+          agent_used: currentAgent,
+          timestamp: new Date().toISOString(),
+          isWelcome: true
+        };
+        setMessages([welcomeMessage]);
+      }
+      setInitialized(true);
+    }
+  }, [initialized, messages.length, currentAgent]);
 
   const value = {
     messages,
