@@ -32,7 +32,15 @@ class FirebaseService:
         # Initialize Firebase Admin SDK once
         if not FirebaseService._initialized:
             try:
-                cred = credentials.Certificate(settings.firebase_credentials_path)
+                # Create credentials from environment variables
+                cred_dict = {
+                    "type": "service_account",
+                    "project_id": settings.firebase_project_id,
+                    "private_key": settings.firebase_private_key.replace('\\n', '\n'),
+                    "client_email": settings.firebase_client_email,
+                    "token_uri": "https://oauth2.googleapis.com/token"
+                }
+                cred = credentials.Certificate(cred_dict)
                 firebase_admin.initialize_app(cred, {
                     'databaseURL': self.database_url
                 })

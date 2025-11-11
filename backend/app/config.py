@@ -20,7 +20,9 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
         "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "https://solutiontreevirtualcoach.web.app",
+        "https://solutiontreevirtualcoach.firebaseapp.com"
     ]
 
     # OpenAI Configuration
@@ -36,7 +38,9 @@ class Settings(BaseSettings):
     pinecone_top_k: int = 3  # Reduced from 5 for faster responses
 
     # Firebase Configuration
-    firebase_credentials_path: str
+    firebase_project_id: str
+    firebase_private_key: str
+    firebase_client_email: str
     firebase_database_url: str
 
     # Conversation Settings
