@@ -26,14 +26,15 @@ const LoginPage = () => {
       <div className="max-w-md w-full">
         {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="text-4xl">📚</div>
-            <div>
-              <h1 className="text-3xl font-bold text-st-blue-dark">Solution Tree</h1>
-              <p className="text-sm text-gray-600">Virtual Coach</p>
-            </div>
+          <div className="flex items-center justify-center mb-6">
+            <img
+              src="/logo.png"
+              alt="Solution Tree"
+              className="h-16 w-auto"
+            />
           </div>
-          <p className="text-gray-600 mt-4">
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Virtual Coach</h2>
+          <p className="text-gray-600">
             Transform education worldwide to ensure learning for all
           </p>
         </div>
